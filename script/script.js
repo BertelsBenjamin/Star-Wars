@@ -14,12 +14,15 @@
                         for(i=0; i<planets.results.length;i++){
                             arrPlanets.push(planets.results[i]);
                         }
+                        console.log(arrPlanets);
                         if (arrPlanets.length===61){
-                            console.log(arrPlanets);
                             for (i=0; i<arrPlanets.length;i++) {
-                                for (j = 0; j < arrPlanets[i].residents.length; j++) {
-                                    console.log(arrPlanets[i].residents);
-                                    getData(arrPlanets[i].residents[j]);
+                                    arrResidents.push(arrPlanets[i].residents);
+                            }
+                            console.log(arrResidents);
+                            for(i<0; i<arrResidents.length; i++){
+                                for(j=0; j<arrResidents[i].length; j++){
+                                    getData(arrResidents[i][j]);
                                 }
                             }
                             fillTable();
@@ -34,7 +37,6 @@
         function fillTable(){
             //FILL TABLE HEAD
             planetKeys = Object.keys(arrPlanets[0]);
-            console.log(arrPlanets[0].created);
             for (i=0; i<mustHaveKeys.length; i++){
                   for (j=0; j<planetKeys.length; j++){
                       if (mustHaveKeys[i]===planetKeys[j]){
@@ -75,6 +77,7 @@
     //DOCUMENT READY
     $(document).ready(function () {
         getData("https://swapi.co/api/planets/");
+        addRowsAndColumnsToTDs();
 
     })
 })(jQuery);
