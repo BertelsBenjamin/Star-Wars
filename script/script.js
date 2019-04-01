@@ -3,36 +3,46 @@
     let arrPlanets = [];
     let mustHaveKeys = ['name', 'climate', 'diameter', 'gravity', 'orbital_period', 'population', 'residents', 'rotation_period', 'surface_water', 'terrain', 'created'];
     let planetKeys = [];
+    let arrResidentsLinks = [];
     let arrResidents = [];
 
     //FUNCTIONS
 
-        function getData(url){
-                $.getJSON(url)
-                    .done(function (planets){
-                        getData(planets.next);
-                        for(i=0; i<planets.results.length;i++){
-                            arrPlanets.push(planets.results[i]);
-                        }
-                        console.log(arrPlanets);
-                        if (arrPlanets.length===61){
-                            for (i=0; i<arrPlanets.length;i++) {
-                                    arrResidents.push(arrPlanets[i].residents);
+            function getData(url){
+                    $.getJSON(url)
+                        .done(function (planets){
+                            getData(planets.next);
+                            for(i=0; i<planets.results.length;i++){
+                                arrPlanets.push(planets.results[i]);
                             }
-                            console.log(arrResidents);
-                            for(i<0; i<arrResidents.length; i++){
-                                for(j=0; j<arrResidents[i].length; j++){
-                                    getData(arrResidents[i][j]);
+                            
+                            if (arrPlanets.length===61){
+                                console.log(arrPlanets);
+                                for (i=0; i<arrPlanets.length;i++) {
+                                        arrResidentsLinks.push(arrPlanets[i].residents);
                                 }
+                                console.log(arrResidentsLinks);
+                                for(let k=0; k<arrResidentsLinks.length; k++){
+                                    for(let l=0; l<arrResidentsLinks[k].length; l++){
+                                        $.getJSON(arrResidentsLinks[k][l])
+                                        .done(function(residents){
+                                            arrResidents.push(residents);
+                                        })
+                                        .fail(function (jqxhr, textStatus, error) {
+                                            var err = textStatus + ", " + error;
+                                            console.log("Request Failed: " + err);
+                                        });
+                                    }
+                                }
+                                console.log(arrResidents);
+                                fillTable();
                             }
-                            fillTable();
-                        }
-                    })
-                    .fail(function (jqxhr, textStatus, error) {
-                        var err = textStatus + ", " + error;
-                        console.log("Request Failed: " + err);
-                    });
-        }
+                        })
+                        .fail(function (jqxhr, textStatus, error) {
+                            var err = textStatus + ", " + error;
+                            console.log("Request Failed: " + err);
+                        });
+            }
 
         function fillTable(){
             //FILL TABLE HEAD
@@ -77,6 +87,7 @@
     //DOCUMENT READY
     $(document).ready(function () {
         getData("https://swapi.co/api/planets/");
+        
         addRowsAndColumnsToTDs();
 
     })
