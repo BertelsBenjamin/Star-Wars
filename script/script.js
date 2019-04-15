@@ -26,7 +26,15 @@
                                     for(let l=0; l<arrResidentsLinks[k].length; l++){
                                         $.getJSON(arrResidentsLinks[k][l])
                                         .done(function(residents){
-                                            arrResidents.push(residents);
+                                            addRowsAndColumnsToTDs();
+                                            $.getJSON($('.column-6').html())
+                                            .done(function(residents){
+                                                
+                                            })
+                                            .fail(function (jqxhr, textStatus, error) {
+                                                var err = textStatus + ", " + error;
+                                                console.log("Request Failed: " + err);
+                                            });
                                         })
                                         .fail(function (jqxhr, textStatus, error) {
                                             var err = textStatus + ", " + error;
@@ -34,7 +42,6 @@
                                         });
                                     }
                                 }
-                                console.log(arrResidents);
                                 fillTable();
                             }
                         })
@@ -54,6 +61,7 @@
                       }
                   }
             }
+
             //FILL TABLE BODY
             for (i=0; i<arrPlanets.length; i++){
                 $('#tbody').append('<tr></tr>');
@@ -75,11 +83,9 @@
                 $(e).attr('id', 'row-' + i);
             });
 
-            $('td').each(function(i, e){
-                $(e).addClass(e.parentElement.getAttribute('id'));
-            });
-
-            for (i=0, j=1; i<11, j<11; i++, j++){
+            for (i=0, j=1; i<$('tr').children().length, j<arrPlanets.length; i++, j++){
+                console.log($('td:nth-child(' + j + ')'));
+                $('td:nth-child(' + j + ')').addClass($('td:nth-child(' + j + ')').parent().attr('id'));
                 $('td:nth-child(' + j + ')').addClass('column-' + i);
             }
         }
@@ -87,8 +93,5 @@
     //DOCUMENT READY
     $(document).ready(function () {
         getData("https://swapi.co/api/planets/");
-        
-        addRowsAndColumnsToTDs();
-
     })
 })(jQuery);
